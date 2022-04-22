@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Спсиок имён</title>
+</head>
+<body>
+<h1>Все кандидаты</h1>
+{% for candidate in cands_mas %}
+<p><a href="/">{{candidate.name}}</a></p>
+{% endfor %}
+</body>
+</html>

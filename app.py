@@ -1,43 +1,35 @@
-from flask import Flask
-import json
+from flask import Flask, render_template
+import utils
+
+
 
 app = Flask(__name__)
-
-with open("candidates.json", "r", encoding="utf-8") as cand_file:
-    candidates_mas = json.load(cand_file)
 
 
 @app.route("/")
 def all_cand():
-    result = '<pre>'
-    for i in range(len(candidates_mas)):
-        result += (f"<pre>"
-                   f"Имя кандидата - {candidates_mas[i]['name']}\n"
-                   f"Позиция кандидата - {candidates_mas[i]['position']}\n"
-                   f"Навыки - {candidates_mas[i]['skills']}\n\n"
-                   )
-    result += '<pre>'
-    return result
+    #список всех кандидатов
+    cands_mas = utils.load_candidates_from_json("candidates.json")
+    return render_template("list.html", cands_mas=cands_mas)
 
 
-@app.route("/candidates/<int:x>")
-def candidate(x):
-    temp = candidates_mas[x]['picture'].replace('"', '')
-    return f"<img src= '{temp}'>\n<pre>Имя кандидата - {candidates_mas[x]['name']}\nПозиция кандидата - {candidates_mas[x]['position']}\nНавыки - {candidates_mas[x]['skills']}</pre>"
+@app.route("/candidates/<int:x>/")
+def candidate_number(x):
+    #вся информация о человеке под определённым номером
+    cand = utils.get_candidate(x)
+    return render_template("card.html", cand=cand)
 
+@app.route("/search/<candidate_name>")
+def cand_name(candidate_name):
+    name_cand = utils.get_candidates_by_name(candidate_name)
+    length_programmers = len(name_cand) #кол-во людей с определённым именем
+    return render_template("search.html", length_programmers=length_programmers, name_cand=name_cand)
 
-@app.route("/skills/<x>/")
-def page_feed(x):
-    result = '<pre>'
-    for i in range(len(candidates_mas)):
-        cand_skills = candidates_mas[i]['skills'].lower().split(', ')
-        if x in cand_skills:
-            result += (f"Имя кандидата - {candidates_mas[i]['name']}\n"
-                       f"Позиция кандидата - {candidates_mas[i]['position']}\n"
-                       f"Навыки - {candidates_mas[i]['skills']}\n\n"
-                       )
-    result += '<pre>'
-    return result
+@app.route("/skills/<skill_name>/")
+def page_skill(skill_name):
+    skill_cands_mas = utils.get_candidates_by_skill(skill_name)
+    length = len(skill_cands_mas) #кол-во людей с определённым скиллом
+    return render_template("skill.html", skill=skill_name, length=length, skill_cands_mas=skill_cands_mas)
 
 
 app.run()

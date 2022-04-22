@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Скилл</title>
+</head>
+<body>
+<h1>Найдено со скиллом {{skill}}: {{length}}</h1>
+{% for candidate in skill_cands_mas %}
+<p><a href="/skill/<skill_name>">{{candidate.name}}</a></p>
+{% endfor %}
+</body>
+</html>
